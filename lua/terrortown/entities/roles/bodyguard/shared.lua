@@ -1,15 +1,16 @@
 if SERVER then
 	AddCSLuaFile()
 
-	resource.AddFile('materials/vgui/ttt/dynamic/roles/icon_pri.vmt')
+	resource.AddFile('materials/vgui/ttt/dynamic/roles/icon_bodygrd.vmt')
+	resource.AddFile('materials/vgui/ttt/dynamic/roles/icon_bodygrd.vtf')
 end
 
 ROLE.Base = 'ttt_role_base'
 
 ROLE.index = ROLE_BODYGUARD
-ROLE.color = Color(60, 55, 55, 255)
-ROLE.dkcolor = Color(50, 45, 45, 255)
-ROLE.bgcolor = Color(50, 45, 45, 255)
+ROLE.color = Color(255, 115, 0, 255)
+ROLE.dkcolor = Color(245, 105, 0, 255)
+ROLE.bgcolor = Color(245, 105, 0, 255)
 ROLE.abbr = 'bodygrd'
 ROLE.surviveBonus = 0 -- bonus multiplier for every survive while another player was killed
 ROLE.scoreKillsMultiplier = 1 -- multiplier for kill of player of another team
@@ -20,7 +21,7 @@ ROLE.preventTraitorAloneCredits = true
 ROLE.unknownTeam = true -- player don't know their teammates
 
 roles.InitCustomTeam(ROLE.name, {
-    icon = 'vgui/ttt/dynamic/roles/icon_pri',
+    icon = 'vgui/ttt/dynamic/roles/icon_bodygrd',
     color = ROLE.color
 })
 ROLE.defaultTeam = TEAM_INNOCENT
@@ -53,60 +54,56 @@ end)
 if SERVER then
 	local function InitRoleBodyGuard(ply)
 		ply:GiveEquipmentWeapon('stungun')
-    end
+		timer.Simple(0.05, function()
+			if ply:GetSubRole() ~= ROLE_BODYGUARD then return end
+			if ply:IsTerror() and not ply:IsSpec() then
+				BODYGRD_DATA:FindNewGuardingPlayer(ply)
+			end
+		end)
+  end
 
     hook.Add('TTT2UpdateSubrole', 'TTT2BodyGuardGiveStrip', function(ply, old, new) -- called on normal role set
         if new == ROLE_BODYGUARD then
             InitRoleBodyGuard(ply)
         elseif old == ROLE_BODYGUARD then
             ply:StripWeapon('stungun')
+						ply:SetNWEntity('guarding_player', nil)
         end
     end)
 
-    hook.Add('PlayerSpawn', 'TTT2PriestGiveStunSpawn', function(ply) -- called on player respawn
-        if ply:GetSubRole() ~= ROLE_PRIEST then return end
-        InitRoleBodyGuard(ply)
+		hook.Add("TTT2UpdateTeam", "TTT2BodyGuardTeamChanged", function(ply, oldTeam, team)
+			if ply:GetSubRole() == ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
+
+			if not BODYGRD_DATA:HasGuards(ply) then return end
+
+			for k,v in ipairs(BODYGRD_DATA:GetGuards(ply)) do
+				v:UpdateTeam(team)
+			end
+			SendFullStateUpdate()
+		end)
+
+    hook.Add('PlayerSpawn', 'TTT2GuardGiveStunSpawn', function(ply) -- called on player respawn
+        if ply:GetSubRole() ~= ROLE_BODYGUARD then return end
+				if ply:IsTerror() and not ply:IsSpec() then
+        	InitRoleBodyGuard(ply)
+				end
     end)
 
 
-    hook.Add('TTTBeginRound', 'TTT2BodyGuardBeginRound', function()
-      local bodyGuards = {}
-      local alivePlayers = {}
-
-      for k,v in ipairs(player.GetAll()) do
-        if v:IsTerror() and v:Alive() and not v:IsSpec() and v:GetSubRole() == ROLE_BODYGUARD then
-          table.insert(bodyGuards, v)
-        elseif v:IsTerror() and v:Alive() and not v:IsSpec() and v:GetSubRole() ~= ROLE_BODYGUARD then
-          table.insert(alivePlayers, v)
-        end
-      end
-
-      local notEnoughAlive = #alivePlayers < #bodyGuards
-
-      if notEnoughAlive then
-
-        local chosenPlayer = table.Random(alivePlayers)
-
-        for k,v in ipairs(bodyGuards) do
-          BODYGRD_DATA:SetNewGuard(v, chosenPlayer)
-        end
-
-        return
-      end
-
-      for k,v in ipairs(bodyGuards) do
-        local guardP = table.Random(alivePlayers)
-        table.RemoveByValue(alivePlayers, guardP)
-        BODYGRD_DATA:SetNewGuard(v, guardP)
-      end
-    end)
+    --[[hook.Add('TTTBeginRound', 'TTT2BodyGuardBeginRound', function()
+			for k,v in ipairs(player.GetAll() do
+				if v:GetSubRole() == ROLE_BODYGUARD then
+					BODYGRD_DATA:FindNewGuardingPlayer(v)
+				end
+			end)
+    end]]--
 
     hook.Add('TTT2SpecialRoleSyncing', 'TTT2RoleBodyGuardMod', function(ply, tbl)
       if ply and ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() == ROUND_POST then return end
 
-      for traitor in pairs(tbl) do
-        if traitor:IsTerror() and traitor:Alive() and traitor:GetSubRole() == ROLE_TRAITOR then
-          tbl[traitor] = {ROLE_INNOCENT, TEAM_INNOCENT}
+      for teamRole in pairs(tbl) do
+        if teamRole:IsTerror() and teamRole:Alive() and teamRole:HasTeam(ply:GetTeam()) and teamRole ~= ply and teamRole:GetSubRole() ~= ROLE_DETECTIVE then
+          tbl[teamRole] = {ROLE_INNOCENT, TEAM_INNOCENT}
         end
       end
 

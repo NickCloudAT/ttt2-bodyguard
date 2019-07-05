@@ -3,42 +3,146 @@ BODYGRD_DATA = {}
 
 if CLIENT then
 
+  net.Receive("TTT2BodyGrdNewGuardMessage", function()
+    local name = net.ReadString()
+
+    local ply = LocalPlayer()
+
+    chat.AddText(Color(0, 255, 50), "[BodyGuard] " .. name .. " is now your BodyGuard.")
+
+    chat.PlaySound()
+
+  end)
+
+  net.Receive("TTT2BodyGrdNewGuardingMessage", function()
+    local name = net.ReadString()
+    local role = net.ReadString()
+    local roleColor = net.ReadColor()
+
+    local ply = LocalPlayer()
+
+    chat.AddText("[BodyGuard] You are guarding " .. name .. ". His Role: ", roleColor, role)
+
+    chat.PlaySound()
+
+  end)
+
+  net.Receive("TTT2BodyGrdGuardDeathMessage", function()
+    chat.AddText(Color(255, 0, 0), "[BodyGuard] Your BodyGuard has died!")
+
+    chat.PlaySound()
+  end)
 
 end
 
 
 if SERVER then
 
+  util.AddNetworkString("TTT2BodyGrdNewGuardMessage")
+  util.AddNetworkString("TTT2BodyGrdNewGuardingMessage")
+  util.AddNetworkString("TTT2BodyGrdGuardDeathMessage")
+
  function BODYGRD_DATA:SetNewGuard(guard, toGuard)
    if IsValid(toGuard) then
      guard:UpdateTeam(toGuard:GetTeam())
+
+     local roleData = roles.GetByIndex(toGuard:GetSubRole())
+
+     net.Start("TTT2BodyGrdNewGuardingMessage")
+     net.WriteString(toGuard:Nick())
+     net.WriteString(roleData.name)
+     net.WriteColor(roleData.color)
+
+     net.Send(guard)
+
+     net.Start("TTT2BodyGrdNewGuardMessage")
+     net.WriteString(guard:Nick())
+
+     net.Send(toGuard)
+
+     SendFullStateUpdate()
+
+     guard:SetTargetPlayer(toGuard)
+
+     print(guard:Nick() .. " is now guarding: " .. toGuard:Nick())
+
    end
 
-   if IsValid(toGuard) then
-     print(guard:Nick() .. " TOGUARD: " .. toGuard:Nick())
-  end
+   guard:SetNWEntity("guarding_player", toGuard)
+ end
 
-   guard.toguard = toGuard
+ function BODYGRD_DATA:FindNewGuardingPlayer(ply)
+   local alivePlayers = {}
+
+   for k,v in ipairs(player.GetAll()) do
+     if v:IsTerror() and v:Alive() and not v:IsSpec() and v:GetSubRole() ~= ROLE_BODYGUARD and v ~= ply then
+       table.insert(alivePlayers, v)
+     end
+   end
+
+   local tmp = table.Copy(alivePlayers)
+
+   for k,v in ipairs(alivePlayers) do
+     if BODYGRD_DATA:HasGuards(v) then
+       table.RemoveByValue(tmp, v)
+     end
+   end
+
+   local playerAvailable = #tmp > 0
+   print("AVAILABLE: " .. tostring(playerAvailable))
+
+   if playerAvailable then
+     local newToGuard = table.Random(tmp)
+     BODYGRD_DATA:SetNewGuard(ply, newToGuard)
+     return
+   end
+
+   local newToGuard = table.Random(alivePlayers)
+
+   BODYGRD_DATA:SetNewGuard(ply, newToGuard)
+
  end
 
  function BODYGRD_DATA:GetGuards(ply)
    local guards = {}
    for k,v in ipairs(player.GetAll()) do
      if v:IsTerror() and v:Alive() and not v:IsSpec() and v:GetSubRole() == ROLE_BODYGUARD then
-       table.insert(guards, v)
+       local nwGuard = v:GetNWEntity("guarding_player")
+       if IsValid(nwGuard) then
+         if nwGuard == ply then table.insert(guards, v) end
+       end
      end
    end
-   if #guard == 0 then return nil end
+   if #guards == 0 then return nil end
    return guards
  end
 
+ function BODYGRD_DATA:HasGuards(ply)
+   local guards = BODYGRD_DATA:GetGuards(ply)
+
+   if not guards then return false end
+   if #guards <= 0 then return false end
+
+   return true
+
+ end
+
+ function BODYGRD_DATA:IsGuardOf(guard, check)
+   if not BODYGRD_DATA:HasGuards(check) then return false end
+
+   local guards = BODYGRD_DATA:GetGuards(check)
+
+   return table.HasValue(guards, guard)
+
+ end
+
  function BODYGRD_DATA:GetGuardedPlayer(ply)
-   local toGuard = ply.toguard
+   local toGuard = ply:GetNWEntity("guarding_player")
    if not IsValid(toGuard) then return nil end
    return toGuard
  end
 
- hook.Add('PostPlayerDeath', 'TTT2BodygrdDeathHandler', function(ply)
+ hook.Add('PlayerDeath', 'TTT2BodygrdDeathHandler', function(ply, infl, attacker)
    if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
 
    local toGuard = BODYGRD_DATA:GetGuardedPlayer(ply)
@@ -47,6 +151,77 @@ if SERVER then
 
    BODYGRD_DATA:SetNewGuard(ply, nil)
 
+   net.Start("TTT2BodyGrdGuardDeathMessage")
+   net.Send(toGuard)
+
+ end)
+
+ hook.Add('PlayerDeath', 'TTT2GuardedDeathHandler', function(ply, infl, attacker)
+   if ply:GetSubRole() == ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
+
+   local guards = BODYGRD_DATA:GetGuards(ply)
+
+   if not BODYGRD_DATA:HasGuards(ply) then return end
+
+   for k,v in ipairs(guards) do
+     if v == attacker then
+       v:Kill()
+       BODYGRD_DATA:SetNewGuard(v, nil)
+     end
+   end
+ end)
+
+ hook.Add('PostPlayerDeath', 'TTT2GuardedDeathHandler2', function(ply)
+   if ply:GetSubRole() == ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
+
+   local guards = BODYGRD_DATA:GetGuards(ply)
+
+   if not BODYGRD_DATA:HasGuards(ply) then return end
+
+   for k,v in ipairs(guards) do
+     BODYGRD_DATA:SetNewGuard(v, nil)
+     BODYGRD_DATA:FindNewGuardingPlayer(v)
+     v:SetHealth(v:Health())
+   end
+
+ end)
+
+
+ hook.Add('EntityTakeDamage', 'ReflectGuardedDamage', function(ply, dmginfo)
+    if not BODYGRD_DATA:HasGuards(ply) or GetRoundState() ~= ROUND_ACTIVE then return end
+
+    local attacker = dmginfo:GetAttacker()
+
+    if not IsValid(attacker) or not attacker:IsPlayer() then return end
+
+    if not attacker:IsTerror() then return end
+
+    if not BODYGRD_DATA:IsGuardOf(attacker, ply) then return end
+
+    local damage = dmginfo:GetDamage()
+
+    dmginfo:ScaleDamage(0.1)
+
+
+    attacker:TakeDamage(damage*1.5, attacker, attacker)
+
+ end)
+
+
+ --[[hook.Add('PlayerSpawn', 'BodyGuardSpawnHandler', function(ply)
+   timer.Simple(0.1, function()
+     if not IsValid(ply) or GetRoundState() ~= ROUND_ACTIVE then return end
+     if ply:GetSubRole() ~= ROLE_BODYGUARD then return end
+     if ply:IsTerror() and not ply:IsSpec() then
+       BODYGRD_DATA:FindNewGuardingPlayer(ply)
+     end
+   end)
+ end)]]--
+
+ hook.Add('TTTPrepareRound', 'TTT2ResetBodyGuardValues', function()
+    for k, v in ipairs(player.GetAll()) do
+      v:SetNWEntity('guarding_player', nil)
+    end
  end)
 
 end
