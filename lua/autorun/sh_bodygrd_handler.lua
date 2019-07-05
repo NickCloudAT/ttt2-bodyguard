@@ -64,8 +64,6 @@ if SERVER then
 
      guard:SetTargetPlayer(toGuard)
 
-     print(guard:Nick() .. " is now guarding: " .. toGuard:Nick())
-
    end
 
    guard:SetNWEntity("guarding_player", toGuard)
@@ -89,7 +87,6 @@ if SERVER then
    end
 
    local playerAvailable = #tmp > 0
-   print("AVAILABLE: " .. tostring(playerAvailable))
 
    if playerAvailable then
      local newToGuard = table.Random(tmp)
@@ -165,8 +162,10 @@ if SERVER then
 
    for k,v in ipairs(guards) do
      if v == attacker then
-       v:Kill()
-       BODYGRD_DATA:SetNewGuard(v, nil)
+       if GetConVar('ttt_bodygrd_kill_guard_teamkill'):GetBool() then
+        v:Kill()
+        BODYGRD_DATA:SetNewGuard(v, nil)
+       end
      end
    end
  end)
@@ -181,7 +180,7 @@ if SERVER then
    for k,v in ipairs(guards) do
      BODYGRD_DATA:SetNewGuard(v, nil)
      BODYGRD_DATA:FindNewGuardingPlayer(v)
-     v:SetHealth(v:Health())
+     v:TakeDamage(GetConVar('ttt_bodygrd_damage_guarded_death'):GetInt(), v, v)
    end
 
  end)
@@ -200,23 +199,13 @@ if SERVER then
 
     local damage = dmginfo:GetDamage()
 
-    dmginfo:ScaleDamage(0.1)
+    dmginfo:ScaleDamage(GetConVar('ttt_bodygrd_damage_dealt_multiplier'):GetFloat())
 
 
-    attacker:TakeDamage(damage*1.5, attacker, attacker)
+    attacker:TakeDamage(damage*GetConVar('ttt_bodygrd_damage_reflect_multiplier'):GetFloat(), attacker, attacker)
 
  end)
 
-
- --[[hook.Add('PlayerSpawn', 'BodyGuardSpawnHandler', function(ply)
-   timer.Simple(0.1, function()
-     if not IsValid(ply) or GetRoundState() ~= ROUND_ACTIVE then return end
-     if ply:GetSubRole() ~= ROLE_BODYGUARD then return end
-     if ply:IsTerror() and not ply:IsSpec() then
-       BODYGRD_DATA:FindNewGuardingPlayer(ply)
-     end
-   end)
- end)]]--
 
  hook.Add('TTTPrepareRound', 'TTT2ResetBodyGuardValues', function()
     for k, v in ipairs(player.GetAll()) do

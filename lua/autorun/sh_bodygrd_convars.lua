@@ -1,0 +1,4 @@
+CreateConVar('ttt_bodygrd_damage_guarded_death', 20, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar('ttt_bodygrd_kill_guard_teamkill', 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar('ttt_bodygrd_damage_reflect_multiplier', 1.5, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar('ttt_bodygrd_damage_dealt_multiplier', 0.1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
