@@ -13,6 +13,11 @@ if SERVER then
    if IsValid(toGuard) then
      guard:UpdateTeam(toGuard:GetTeam())
    end
+
+   if IsValid(toGuard) then
+     print(guard:Nick() .. " TOGUARD: " .. toGuard:Nick())
+  end
+
    guard.toguard = toGuard
  end
 

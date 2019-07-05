@@ -17,7 +17,6 @@ ROLE.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
 ROLE.preventFindCredits = true
 ROLE.preventKillCredits = true
 ROLE.preventTraitorAloneCredits = true
-ROLE.preventWin = false
 ROLE.unknownTeam = true -- player don't know their teammates
 
 roles.InitCustomTeam(ROLE.name, {
@@ -36,6 +35,21 @@ ROLE.conVarData = {
 	random = 33
 }
 
+
+hook.Add("TTT2FinishedLoading", "BodyGuardInitT", function()
+
+	if CLIENT then
+		LANG.AddToLanguage("English", BODYGUARD.name, "BodyGuard")
+		LANG.AddToLanguage("English", "info_popup_" .. BODYGUARD.name,
+			[[You are a Bodyguard!
+			Try to protect your Player..]])
+		LANG.AddToLanguage("English", "body_found_" .. BODYGUARD.abbr, "They were BodyGuard.")
+		LANG.AddToLanguage("English", "search_role_" .. BODYGUARD.abbr, "This person was a BodyGuard!")
+		LANG.AddToLanguage("English", "target_" .. BODYGUARD.name, "BodyGuard")
+		LANG.AddToLanguage("English", "ttt2_desc_" .. BODYGUARD.name, [[The BodyGuard needs to win with his Players team]])
+	end
+end)
+
 if SERVER then
 	local function InitRoleBodyGuard(ply)
 		ply:GiveEquipmentWeapon('stungun')
@@ -43,7 +57,7 @@ if SERVER then
 
     hook.Add('TTT2UpdateSubrole', 'TTT2BodyGuardGiveStrip', function(ply, old, new) -- called on normal role set
         if new == ROLE_BODYGUARD then
-            InitRolePriest(ply)
+            InitRoleBodyGuard(ply)
         elseif old == ROLE_BODYGUARD then
             ply:StripWeapon('stungun')
         end
@@ -51,7 +65,7 @@ if SERVER then
 
     hook.Add('PlayerSpawn', 'TTT2PriestGiveStunSpawn', function(ply) -- called on player respawn
         if ply:GetSubRole() ~= ROLE_PRIEST then return end
-        InitRolePriest(ply)
+        InitRoleBodyGuard(ply)
     end)
 
 
@@ -71,7 +85,7 @@ if SERVER then
 
       if notEnoughAlive then
 
-        local chosenPlayer = table.random(alivePlayers)
+        local chosenPlayer = table.Random(alivePlayers)
 
         for k,v in ipairs(bodyGuards) do
           BODYGRD_DATA:SetNewGuard(v, chosenPlayer)
@@ -80,14 +94,22 @@ if SERVER then
         return
       end
 
-      for k,v in ipairs(alivePlayers) do
-        local pGuard = table.random(body)
-        table.RemoveByValue(bodyGuards, pGuard)
-        BODYGRD_DATA:SetNewGuard(pGuard, v)
+      for k,v in ipairs(bodyGuards) do
+        local guardP = table.Random(alivePlayers)
+        table.RemoveByValue(alivePlayers, guardP)
+        BODYGRD_DATA:SetNewGuard(v, guardP)
       end
-
-
     end)
 
+    hook.Add('TTT2SpecialRoleSyncing', 'TTT2RoleBodyGuardMod', function(ply, tbl)
+      if ply and ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() == ROUND_POST then return end
+
+      for traitor in pairs(tbl) do
+        if traitor:IsTerror() and traitor:Alive() and traitor:GetSubRole() == ROLE_TRAITOR then
+          tbl[traitor] = {ROLE_INNOCENT, TEAM_INNOCENT}
+        end
+      end
+
+    end)
 
 end
