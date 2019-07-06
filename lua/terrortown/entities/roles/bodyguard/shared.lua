@@ -82,8 +82,8 @@ if SERVER then
 			SendFullStateUpdate()
 		end)
 
-    hook.Add('PlayerSpawn', 'TTT2GuardGiveStunSpawn', function(ply) -- called on player respawn
-        if ply:GetSubRole() ~= ROLE_BODYGUARD then return end
+    hook.Add('PlayerSpawn', 'TTT2GuardSpawn', function(ply) -- called on player respawn
+        if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
 				if ply:IsTerror() and not ply:IsSpec() then
         	InitRoleBodyGuard(ply)
 				end
