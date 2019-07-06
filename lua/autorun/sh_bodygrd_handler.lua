@@ -62,6 +62,8 @@ if SERVER then
 
      SendFullStateUpdate()
 
+     guard:SetTargetPlayer(toGuard)
+
    end
 
    guard:SetNWEntity("guarding_player", toGuard)
