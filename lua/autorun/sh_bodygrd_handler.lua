@@ -208,6 +208,7 @@ if SERVER then
  hook.Add('TTTPrepareRound', 'TTT2ResetBodyGuardValues', function()
     for k, v in ipairs(player.GetAll()) do
       v:SetNWEntity('guarding_player', nil)
+      print(v:Nick() .. " RESET BODYGUARD")
     end
  end)
 

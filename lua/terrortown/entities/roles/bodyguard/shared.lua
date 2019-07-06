@@ -65,6 +65,7 @@ if SERVER then
     hook.Add('TTT2UpdateSubrole', 'TTT2BodyGuardGiveStrip', function(ply, old, new) -- called on normal role set
         if new == ROLE_BODYGUARD then
             InitRoleBodyGuard(ply)
+						print("GOT ROLE BODYGUARD")
         elseif old == ROLE_BODYGUARD then
             ply:StripWeapon('stungun')
 						ply:SetNWEntity('guarding_player', nil)
@@ -86,17 +87,9 @@ if SERVER then
         if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
 				if ply:IsTerror() and not ply:IsSpec() then
         	InitRoleBodyGuard(ply)
+					print("BODY GUARD SPAWN INIT")
 				end
     end)
-
-
-    --[[hook.Add('TTTBeginRound', 'TTT2BodyGuardBeginRound', function()
-			for k,v in ipairs(player.GetAll() do
-				if v:GetSubRole() == ROLE_BODYGUARD then
-					BODYGRD_DATA:FindNewGuardingPlayer(v)
-				end
-			end)
-    end]]--
 
     hook.Add('TTT2SpecialRoleSyncing', 'TTT2RoleBodyGuardMod', function(ply, tbl)
       if ply and ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() == ROUND_POST then return end
