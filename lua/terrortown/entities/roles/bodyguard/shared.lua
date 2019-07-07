@@ -18,7 +18,7 @@ ROLE.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
 ROLE.preventFindCredits = true
 ROLE.preventKillCredits = true
 ROLE.preventTraitorAloneCredits = true
-ROLE.unknownTeam = false -- handle this in hook
+ROLE.unknownTeam = true -- player does not know their teammates
 
 roles.InitCustomTeam(ROLE.name, {
     icon = 'vgui/ttt/dynamic/roles/icon_bodygrd',
@@ -92,6 +92,12 @@ if SERVER then
 
 			local guardedPlayer = BODYGRD_DATA:GetGuardedPlayer(ply)
 
+			if not IsValid(guardedPlayer) then return end
+
+			if not table.HasValue(tbl, guardedPlayer) then
+				tbl[guardedPlayer] = {guardedPlayer:GetSubRole() or ROLE_INNOCENT, guardedPlayer:GetTeam() or TEAM_INNOCENT}
+			end
+
       for teamRole in pairs(tbl) do
         if teamRole:IsTerror() and teamRole:Alive() and teamRole:HasTeam(ply:GetTeam()) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE then
           tbl[teamRole] = {ROLE_INNOCENT, TEAM_INNOCENT}
@@ -100,7 +106,23 @@ if SERVER then
 
     end)
 
-		hook.Add('TTT2ModifyRadarRole', "TTTRadarBodyguardFix", function(ply, scan)
+
+		hook.Add('TTT2SpecialRoleSyncing', 'TTT2RoleBodyGuardMod2', function(ply, tbl)
+			if ply and ply:GetSubRole() == ROLE_BODYGUARD or GetRoundState() == ROUND_POST then return end
+
+			if not BODYGRD_DATA:HasGuards(ply) then return end
+
+			local guards = BODYGRD_DATA:GetGuards(ply)
+
+			for k,p in ipairs(guards) do
+				if not table.HasValue(tbl, p) then
+					tbl[p] = {p:GetSubRole() or ROLE_INNOCENT, p:GetTeam() or TEAM_INNOCENT}
+				end
+			end
+
+		end)
+
+		hook.Add('TTT2ModifyRadarRole', "TTT2RadarBodyguardFix", function(ply, scan)
 			if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
 
 			if BODYGRD_DATA:IsGuardOf(ply, scan) then return end
