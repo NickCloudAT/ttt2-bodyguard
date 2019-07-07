@@ -93,14 +93,14 @@ if SERVER then
 
 			local guardedPlayer = BODYGRD_DATA:GetGuardedPlayer(ply)
 
-			if not IsValid(guardedPlayer) then return end
-
-			if not table.HasValue(tbl, guardedPlayer) then
-				tbl[guardedPlayer] = {guardedPlayer:GetSubRole() or ROLE_INNOCENT, guardedPlayer:GetTeam() or TEAM_INNOCENT}
+			if IsValid(guardedPlayer) then
+				if not table.HasValue(tbl, guardedPlayer) then
+					tbl[guardedPlayer] = {guardedPlayer:GetSubRole() or ROLE_INNOCENT, guardedPlayer:GetTeam() or TEAM_INNOCENT}
+				end
 			end
 
       for teamRole in pairs(tbl) do
-        if teamRole:IsTerror() and teamRole:Alive() and teamRole:HasTeam(ply:GetTeam()) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE then
+        if teamRole:IsTerror() and teamRole:Alive() and teamRole:HasTeam(ply:GetTeam()) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE and not teamRole:GetNWBool('role_found', false) then
           tbl[teamRole] = {ROLE_INNOCENT, TEAM_INNOCENT}
         end
       end

@@ -155,6 +155,8 @@ if SERVER then
    net.Start("TTT2BodyGrdGuardDeathMessage")
    net.Send(toGuard)
 
+   SendFullStateUpdate()
+
  end)
 
  hook.Add('PlayerDeath', 'TTT2GuardedDeathHandler', function(ply, infl, attacker)
