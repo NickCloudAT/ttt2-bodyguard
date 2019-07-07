@@ -19,6 +19,7 @@ ROLE.preventFindCredits = true
 ROLE.preventKillCredits = true
 ROLE.preventTraitorAloneCredits = true
 ROLE.unknownTeam = true -- player does not know their teammates
+ROLE.preventWin = not GetConVar('ttt_bodygrd_win_alone'):GetBool()
 
 roles.InitCustomTeam(ROLE.name, {
     icon = 'vgui/ttt/dynamic/roles/icon_bodygrd',
