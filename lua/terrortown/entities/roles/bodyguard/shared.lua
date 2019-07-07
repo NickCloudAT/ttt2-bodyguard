@@ -53,7 +53,6 @@ end)
 
 if SERVER then
 	local function InitRoleBodyGuard(ply)
-		ply:GiveEquipmentWeapon('stungun')
 		timer.Simple(0.05, function()
 			if ply:GetSubRole() ~= ROLE_BODYGUARD then return end
 			if ply:IsTerror() and not ply:IsSpec() then
@@ -66,7 +65,6 @@ if SERVER then
         if new == ROLE_BODYGUARD then
             InitRoleBodyGuard(ply)
         elseif old == ROLE_BODYGUARD then
-            ply:StripWeapon('stungun')
 						ply:SetNWEntity('guarding_player', nil)
         end
     end)
