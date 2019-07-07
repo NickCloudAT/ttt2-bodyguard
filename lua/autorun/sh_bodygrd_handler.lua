@@ -48,6 +48,9 @@ if SERVER then
   util.AddNetworkString("TTT2BodyGrdGuardDeathMessage")
 
  function BODYGRD_DATA:SetNewGuard(guard, toGuard)
+
+   guard:SetNWEntity("guarding_player", toGuard)
+
    if IsValid(toGuard) then
      guard:UpdateTeam(toGuard:GetTeam())
 
@@ -68,8 +71,6 @@ if SERVER then
      SendFullStateUpdate()
 
    end
-
-   guard:SetNWEntity("guarding_player", toGuard)
  end
 
  function BODYGRD_DATA:FindNewGuardingPlayer(ply)
