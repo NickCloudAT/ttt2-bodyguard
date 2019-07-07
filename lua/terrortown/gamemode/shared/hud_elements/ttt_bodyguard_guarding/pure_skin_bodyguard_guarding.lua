@@ -20,7 +20,7 @@ if CLIENT then -- CLIENT
 
 		if not IsValid(ply) then return end
 
-		local guarding = ply:GetNWEntity('guarding_player')
+		local guarding = ply:GetNWEntity('guarding_player', nil)
 
 		if HUDEditor.IsEditing then
 			self:DrawComponent("- BodyGuard -")

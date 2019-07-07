@@ -33,6 +33,11 @@ if CLIENT then
     chat.PlaySound()
   end)
 
+  hook.Add('TTTPrepareRound', 'TTT2ResetBodyGuardValues', function()
+    local ply = LocalPlayer()
+    ply:SetNWEntity('guarding_player', nil)
+  end)
+
 end
 
 
@@ -202,14 +207,6 @@ if SERVER then
 
     attacker:TakeDamage(damage*GetConVar('ttt_bodygrd_damage_reflect_multiplier'):GetFloat(), attacker, attacker)
 
- end)
-
-
- hook.Add('TTTPrepareRound', 'TTT2ResetBodyGuardValues', function()
-    for k, v in ipairs(player.GetAll()) do
-      v:SetNWEntity('guarding_player', nil)
-      print(v:Nick() .. " RESET BODYGUARD")
-    end
  end)
 
 end
