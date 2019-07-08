@@ -1,5 +1,3 @@
-if SERVER then resource.AddFile("materials/vgui/ttt/icon_bodyguard_guarding.vmt") end
-
 local base = "pure_skin_target"
 
 DEFINE_BASECLASS(base)
@@ -13,6 +11,9 @@ if CLIENT then -- CLIENT
 		BaseClass.PreInitialize(self)
 
 		huds.GetStored("pure_skin"):ForceElement(self.id)
+
+		-- set as fallback default, other skins have to be set to true!
+        self.disabledUnlessForced = false
 	end
 
 	function HUDELEMENT:Draw()
