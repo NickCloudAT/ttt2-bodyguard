@@ -1,3 +1,7 @@
+if SERVER then 
+  resource.AddFile("materials/vgui/ttt/icon_bodyguard_guarding.vmt")
+end
+
 BODYGRD_DATA = {}
 
 

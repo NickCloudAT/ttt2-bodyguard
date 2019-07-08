@@ -1,5 +1,3 @@
-if SERVER then resource.AddFile("materials/vgui/ttt/icon_bodyguard_guarding.vmt") end
-
 local base = "pure_skin_target"
 
 DEFINE_BASECLASS(base)
