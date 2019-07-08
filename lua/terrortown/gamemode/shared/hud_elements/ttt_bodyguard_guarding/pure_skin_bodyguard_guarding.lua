@@ -11,6 +11,9 @@ if CLIENT then -- CLIENT
 		BaseClass.PreInitialize(self)
 
 		huds.GetStored("pure_skin"):ForceElement(self.id)
+
+		-- set as fallback default, other skins have to be set to true!
+        self.disabledUnlessForced = false
 	end
 
 	function HUDELEMENT:Draw()
