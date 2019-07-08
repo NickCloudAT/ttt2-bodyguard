@@ -85,6 +85,8 @@ if SERVER then
  end
 
  function BODYGRD_DATA:FindNewGuardingPlayer(ply)
+   if not ply or not IsValid(ply) then return end
+   if not ply:IsTerror() or ply:IsSpec() then return end
    local alivePlayers = {}
 
    for k,v in ipairs(player.GetAll()) do
@@ -212,13 +214,15 @@ if SERVER then
 
    for k,v in ipairs(guards) do
      BODYGRD_DATA:SetNewGuard(v, nil)
-     BODYGRD_DATA:FindNewGuardingPlayer(v)
+     timer.Simple(0.05, function()
+       BODYGRD_DATA:FindNewGuardingPlayer(v)
+     end)
      v:TakeDamage(GetConVar('ttt_bodygrd_damage_guarded_death'):GetInt(), v, v)
    end
 
  end)
 
- hook.Add('PlayerDisconnected', 'TTT2GuaringDisconnectHandler', function(ply)
+ hook.Add('PlayerDisconnected', 'TTT2GuardDisconnectHandler', function(ply)
    if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
 
    local toGuard = BODYGRD_DATA:GetGuardedPlayer(ply)
