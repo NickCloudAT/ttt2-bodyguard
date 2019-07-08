@@ -7,7 +7,7 @@ Goal is to protect the Player you are dedicated to.
 
 If the Player you need to protect dies, you will get some damage (or die depending on the Convar settings below) and you will also get a new Player to protect.
 
-If you damage the Person you should protect, he will get less damage and you will get much damage back (Depending on the convar settings below). If you manage to kill the Person you need to protect somehow, you will also die (Depending on the convar settings below).
+If you damage the Person you should protect, he will get less damage and you will get much damage back (Depending on the convar settings below). If you somehow manage to kill the Person you need to protect, you will also die (Depending on the convar settings below).
 
 
 ## Convars
