@@ -54,12 +54,7 @@ end)
 
 if SERVER then
 	local function InitRoleBodyGuard(ply)
-		timer.Simple(0.05, function()
-			if ply:GetSubRole() ~= ROLE_BODYGUARD then return end
-			if ply:IsTerror() and not ply:IsSpec() then
-				BODYGRD_DATA:FindNewGuardingPlayer(ply)
-			end
-		end)
+		BODYGRD_DATA:FindNewGuardingPlayer(ply, 0.05)
   end
 
     hook.Add('TTT2UpdateSubrole', 'TTT2BodyGuardGiveStrip', function(ply, old, new) -- called on normal role set
