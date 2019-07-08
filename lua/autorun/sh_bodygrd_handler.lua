@@ -12,6 +12,8 @@ if CLIENT then
 
     chat.PlaySound()
 
+    STATUS:AddStatus('ttt2_role_bodyguard_guarding')
+
   end)
 
   net.Receive("TTT2BodyGrdNewGuardingMessage", function()
@@ -31,11 +33,20 @@ if CLIENT then
     chat.AddText(Color(255, 0, 0), "[BodyGuard] Your BodyGuard has died!")
 
     chat.PlaySound()
+
+    STATUS:RemoveStatus('ttt2_role_bodyguard_guarding')
+
   end)
 
   hook.Add('TTTPrepareRound', 'TTT2ResetBodyGuardValues', function()
     local ply = LocalPlayer()
     ply:SetNWEntity('guarding_player', nil)
+  end)
+
+  hook.Add('TTT2UpdateSubrole', 'TTT2BodyGuardSubChange', function(ply, old, new) -- called on normal role set
+      if old == ROLE_BODYGUARD then
+          ply:SetNWEntity('guarding_player', nil)
+      end
   end)
 
 end
@@ -188,6 +199,36 @@ if SERVER then
      BODYGRD_DATA:FindNewGuardingPlayer(v)
      v:TakeDamage(GetConVar('ttt_bodygrd_damage_guarded_death'):GetInt(), v, v)
    end
+
+ end)
+
+
+ hook.Add('PlayerDisconnected', 'TTT2GuardedDisconnectHandler', function(ply)
+   if ply:GetSubRole() == ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
+
+   local guards = BODYGRD_DATA:GetGuards(ply)
+
+   if not BODYGRD_DATA:HasGuards(ply) then return end
+
+   for k,v in ipairs(guards) do
+     BODYGRD_DATA:SetNewGuard(v, nil)
+     BODYGRD_DATA:FindNewGuardingPlayer(v)
+     v:TakeDamage(GetConVar('ttt_bodygrd_damage_guarded_death'):GetInt(), v, v)
+   end
+
+ end)
+
+ hook.Add('PlayerDisconnected', 'TTT2GuaringDisconnectHandler', function(ply)
+   if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
+
+   local toGuard = BODYGRD_DATA:GetGuardedPlayer(ply)
+
+   if not IsValid(toGuard) then return end
+
+   net.Start("TTT2BodyGrdGuardDeathMessage")
+   net.Send(toGuard)
+
+   SendFullStateUpdate()
 
  end)
 

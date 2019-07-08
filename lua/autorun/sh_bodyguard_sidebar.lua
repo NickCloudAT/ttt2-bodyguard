@@ -4,7 +4,7 @@ if SERVER then
 end
 
 if CLIENT then
-    hook.Add('Initialize', 'ttt2_role_priest_init', function() 
+    hook.Add('Initialize', 'ttt2_role_bodyguard_init', function()
         STATUS:RegisterStatus('ttt2_role_bodyguard_guarding', {
             hud = Material('vgui/ttt/hud_icon_guarded.png'),
             type = 'good'

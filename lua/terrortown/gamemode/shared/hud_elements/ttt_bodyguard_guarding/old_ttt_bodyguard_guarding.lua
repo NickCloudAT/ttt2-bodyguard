@@ -28,14 +28,14 @@ if CLIENT then -- CLIENT
 		local guarding = ply:GetNWEntity('guarding_player', nil)
 
 		if HUDEditor.IsEditing then
-			self:DrawComponent("GUARDING", edit_colors, "- DeathGrip -")
+			self:DrawComponent("GUARDING", edit_colors, "- BodyGuard -")
 		elseif guarding and IsValid(guarding) and ply:IsActive() then
 			local col_tbl = {
 				border = COLOR_WHITE,
 				background = ply:GetRoleDkColor(),
 				fill = ply:GetRoleColor()
 			}
-	
+
 			self:DrawComponent("GUARDING", col_tbl, guarding:Nick())
 		end
 	end
