@@ -95,7 +95,7 @@ if SERVER then
 			end
 
       for teamRole in pairs(tbl) do
-        if teamRole:IsTerror() and teamRole:Alive() and teamRole:HasTeam(ply:GetTeam()) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE and not teamRole:GetNWBool('role_found', false) then
+        if teamRole:IsTerror() and teamRole:Alive() and (teamRole:HasTeam(ply:GetTeam()) or teamRole:GetSubRole() == ROLE_SPY) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE and not teamRole:GetNWBool('role_found', false) then
           tbl[teamRole] = {ROLE_INNOCENT, TEAM_INNOCENT}
         end
       end
