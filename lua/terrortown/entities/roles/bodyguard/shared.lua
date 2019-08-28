@@ -38,7 +38,7 @@ ROLE.conVarData = {
 }
 
 
-hook.Add("TTT2FinishedLoading", "BodyGuardInitT", function()
+hook.Add("TTT2FinishedLoading", "TTT2BodyGuardInitT", function()
 
 	if CLIENT then
 		LANG.AddToLanguage("English", BODYGUARD.name, "BodyGuard")
