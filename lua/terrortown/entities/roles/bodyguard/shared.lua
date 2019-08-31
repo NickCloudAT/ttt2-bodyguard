@@ -134,4 +134,9 @@ if SERVER then
 			return false
 		end)
 
+		hook.Add('TTT2AvoidTeamChat', 'TTT2AvoidBodyGuardChat', function(sender, team, msg)
+			if sender:GetSubRole() ~= ROLE_BODYGUARD or (sender:GetSubRole() == ROLE_BODYGUARD and team == TEAM_INNOCENT) or GetRoundState() ~= ROUND_ACTIVE then return end
+			return false
+		end)
+
 end
