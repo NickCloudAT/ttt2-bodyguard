@@ -139,4 +139,12 @@ if SERVER then
 			return false
 		end)
 
+		hook.Add('TTT2OverrideDisabledSync', 'TTT2BodyGuardBypassDisSync', function(ply, p)
+			if not IsValid(p) or not IsValid(ply) or ply:GetSubRole() ~= ROLE_BODYGUARD then return end
+			
+			if not BODYGRD_DATA:IsGuardOf(ply, p) then return end
+
+			return true
+		end)
+
 end
