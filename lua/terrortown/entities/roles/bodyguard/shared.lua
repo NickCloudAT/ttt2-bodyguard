@@ -5,41 +5,40 @@ if SERVER then
 	resource.AddFile('materials/vgui/ttt/dynamic/roles/icon_bodygrd.vtf')
 end
 
-ROLE.Base = 'ttt_role_base'
 
-ROLE.index = ROLE_BODYGUARD
-ROLE.color = Color(255, 115, 0, 255)
-ROLE.dkcolor = Color(245, 105, 0, 255)
-ROLE.bgcolor = Color(245, 105, 0, 255)
-ROLE.abbr = 'bodygrd'
-ROLE.surviveBonus = 0 -- bonus multiplier for every survive while another player was killed
-ROLE.scoreKillsMultiplier = 1 -- multiplier for kill of player of another team
-ROLE.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
-ROLE.preventFindCredits = true
-ROLE.preventKillCredits = true
-ROLE.preventTraitorAloneCredits = true
-ROLE.unknownTeam = true -- player does not know their teammates
-ROLE.preventWin = not GetConVar('ttt_bodygrd_win_alone'):GetBool()
+function ROLE:PreInitialize()
+	self.index = ROLE_BODYGUARD
+	self.color = Color(255, 115, 0, 255)
+	self.dkcolor = Color(245, 105, 0, 255)
+	self.bgcolor = Color(245, 105, 0, 255)
+	self.abbr = 'bodygrd'
+	self.surviveBonus = 0 -- bonus multiplier for every survive while another player was killed
+	self.scoreKillsMultiplier = 1 -- multiplier for kill of player of another team
+	self.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
+	self.preventFindCredits = true
+	self.preventKillCredits = true
+	self.preventTraitorAloneCredits = true
+	self.unknownTeam = true -- player does not know their teammates
+	self.preventWin = not GetConVar('ttt_bodygrd_win_alone'):GetBool()
 
-roles.InitCustomTeam(ROLE.name, {
-    icon = 'vgui/ttt/dynamic/roles/icon_bodygrd',
-    color = ROLE.color
-})
-ROLE.defaultTeam = TEAM_INNOCENT
+	roles.InitCustomTeam(self.name, {
+	    icon = 'vgui/ttt/dynamic/roles/icon_bodygrd',
+	    color = ROLE.color
+	})
+	self.defaultTeam = TEAM_INNOCENT
 
-ROLE.conVarData = {
-	pct = 0.15, -- necessary: percentage of getting this role selected (per player)
-	maximum = 1, -- maximum amount of roles in a round
-	minPlayers = 8, -- minimum amount of players until this role is able to get selected
-	credits = 0, -- the starting credits of a specific role
-	shopFallback = SHOP_DISABLED,
-	togglable = true, -- option to toggle a role for a client if possible (F1 menu)
-	random = 33
-}
+	self.conVarData = {
+		pct = 0.15, -- necessary: percentage of getting this role selected (per player)
+		maximum = 1, -- maximum amount of roles in a round
+		minPlayers = 8, -- minimum amount of players until this role is able to get selected
+		credits = 0, -- the starting credits of a specific role
+		shopFallback = SHOP_DISABLED,
+		togglable = true, -- option to toggle a role for a client if possible (F1 menu)
+		random = 33
+	}
+end
 
-
-hook.Add("TTT2FinishedLoading", "TTT2BodyGuardInitT", function()
-
+function ROLE:Initialize()
 	if CLIENT then
 		LANG.AddToLanguage("English", BODYGUARD.name, "BodyGuard")
 		LANG.AddToLanguage("English", "info_popup_" .. BODYGUARD.name,
@@ -50,7 +49,9 @@ hook.Add("TTT2FinishedLoading", "TTT2BodyGuardInitT", function()
 		LANG.AddToLanguage("English", "target_" .. BODYGUARD.name, "BodyGuard")
 		LANG.AddToLanguage("English", "ttt2_desc_" .. BODYGUARD.name, [[The BodyGuard needs to win with his Players team]])
 	end
-end)
+end
+
+
 
 if SERVER then
 	local function InitRoleBodyGuard(ply)
@@ -141,7 +142,7 @@ if SERVER then
 
 		hook.Add('TTT2OverrideDisabledSync', 'TTT2BodyGuardBypassDisSync', function(ply, p)
 			if not IsValid(p) or not IsValid(ply) or ply:GetSubRole() ~= ROLE_BODYGUARD then return end
-			
+
 			if not BODYGRD_DATA:IsGuardOf(ply, p) then return end
 
 			return true
