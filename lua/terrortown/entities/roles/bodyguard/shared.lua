@@ -23,7 +23,7 @@ function ROLE:PreInitialize()
 
 	roles.InitCustomTeam(self.name, {
 	    icon = 'vgui/ttt/dynamic/roles/icon_bodygrd',
-	    color = ROLE.color
+	    color = self.color
 	})
 	self.defaultTeam = TEAM_INNOCENT
 
