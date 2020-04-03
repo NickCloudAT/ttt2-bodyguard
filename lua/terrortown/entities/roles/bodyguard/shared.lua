@@ -49,14 +49,14 @@ function ROLE:Initialize()
 		LANG.AddToLanguage("English", "target_" .. BODYGUARD.name, "BodyGuard")
 		LANG.AddToLanguage("English", "ttt2_desc_" .. BODYGUARD.name, [[The BodyGuard needs to win with his Players team]])
 		
-		LANG.AddToLanguage("Italian", BODYGUARD.name, "BodyGuard")
-		LANG.AddToLanguage("Italian", "info_popup_" .. BODYGUARD.name,
+		LANG.AddToLanguage("Italiano", BODYGUARD.name, "BodyGuard")
+		LANG.AddToLanguage("Italiano", "info_popup_" .. BODYGUARD.name,
 			[[Sei un BodyGuard!
 			Prova a proteggere il tuo giocatore..]])
-		LANG.AddToLanguage("Italian", "body_found_" .. BODYGUARD.abbr, "Era un BodyGuard.")
-		LANG.AddToLanguage("Italian", "search_role_" .. BODYGUARD.abbr, "Questa persona era un BodyGuard!")
-		LANG.AddToLanguage("Italian", "target_" .. BODYGUARD.name, "BodyGuard")
-		LANG.AddToLanguage("Italian", "ttt2_desc_" .. BODYGUARD.name, [[La BodyGuard deve vincere col team del suo giocatore]])
+		LANG.AddToLanguage("Italiano", "body_found_" .. BODYGUARD.abbr, "Era un BodyGuard.")
+		LANG.AddToLanguage("Italiano", "search_role_" .. BODYGUARD.abbr, "Questa persona era un BodyGuard!")
+		LANG.AddToLanguage("Italiano", "target_" .. BODYGUARD.name, "BodyGuard")
+		LANG.AddToLanguage("Italiano", "ttt2_desc_" .. BODYGUARD.name, [[La BodyGuard deve vincere col team del suo giocatore]])
 	end
 end
 
