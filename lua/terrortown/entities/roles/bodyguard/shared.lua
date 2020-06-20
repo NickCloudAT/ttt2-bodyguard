@@ -126,7 +126,7 @@ if SERVER then
 
 			if not scan:HasTeam(ply:GetTeam()) then return end
 
-			return ROLE_INNOCENT
+			return ROLE_INNOCENT, TEAM_INNOCENT
 
 		end)
 
