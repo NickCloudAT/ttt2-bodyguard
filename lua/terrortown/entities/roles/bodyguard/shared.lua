@@ -9,8 +9,6 @@ end
 function ROLE:PreInitialize()
 	self.index = ROLE_BODYGUARD
 	self.color = Color(255, 115, 0, 255)
-	self.dkcolor = Color(245, 105, 0, 255)
-	self.bgcolor = Color(245, 105, 0, 255)
 	self.abbr = 'bodygrd'
 	self.surviveBonus = 0 -- bonus multiplier for every survive while another player was killed
 	self.scoreKillsMultiplier = 1 -- multiplier for kill of player of another team
