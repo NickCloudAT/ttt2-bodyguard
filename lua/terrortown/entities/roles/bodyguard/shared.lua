@@ -1,3 +1,5 @@
+if engine.ActiveGamemode() ~= "terrortown" then return end
+
 if SERVER then
 	AddCSLuaFile()
 
@@ -46,7 +48,7 @@ function ROLE:Initialize()
 		LANG.AddToLanguage("English", "search_role_" .. BODYGUARD.abbr, "This person was a BodyGuard!")
 		LANG.AddToLanguage("English", "target_" .. BODYGUARD.name, "BodyGuard")
 		LANG.AddToLanguage("English", "ttt2_desc_" .. BODYGUARD.name, [[The BodyGuard needs to win with his Players team]])
-		
+
 		LANG.AddToLanguage("Español", BODYGUARD.name, "Guardaespaldas")
 		LANG.AddToLanguage("Español", "info_popup_" .. BODYGUARD.name,
 			[[¡Eres un Guardaespaldas!

@@ -1,3 +1,5 @@
+if engine.ActiveGamemode() ~= "terrortown" then return end
+
 local base = "pure_skin_target"
 
 DEFINE_BASECLASS(base)

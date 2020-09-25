@@ -1,3 +1,5 @@
+if engine.ActiveGamemode() ~= "terrortown" then return end
+
 if SERVER then
     resource.AddFile("materials/vgui/ttt/icon_bodyguard_guarding.vmt")
     resource.AddFile("materials/vgui/ttt/hud_icon_guarded.png")
