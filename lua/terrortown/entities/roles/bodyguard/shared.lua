@@ -57,6 +57,15 @@ function ROLE:Initialize()
 		LANG.AddToLanguage("Español", "search_role_" .. BODYGUARD.abbr, "Esta persona era un Guardaespaldas.")
 		LANG.AddToLanguage("Español", "target_" .. BODYGUARD.name, "Guardaespaldas")
 		LANG.AddToLanguage("Español", "ttt2_desc_" .. BODYGUARD.name, [[El Guardaespaldas gana con el equipo de la persona a la cual protege.]])
+		
+		LANG.AddToLanguage("Русский", BODYGUARD.name, "Телохранитель")
+		LANG.AddToLanguage("Русский", "info_popup_" .. BODYGUARD.name,
+			[[Вы телохранитель!
+			Постарайтесь защитить своего игрока..]])
+		LANG.AddToLanguage("Русский", "body_found_" .. BODYGUARD.abbr, "Он был телохранителем.")
+		LANG.AddToLanguage("Русский", "search_role_" .. BODYGUARD.abbr, "Этот человек был телохранителем!")
+		LANG.AddToLanguage("Русский", "target_" .. BODYGUARD.name, "Телохранитель")
+		LANG.AddToLanguage("Русский", "ttt2_desc_" .. BODYGUARD.name, [[Телохранитель должен побеждать со своей командой игроков]])
 	end
 end
 
