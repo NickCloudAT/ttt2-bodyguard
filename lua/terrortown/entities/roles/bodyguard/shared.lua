@@ -12,14 +12,14 @@ function ROLE:PreInitialize()
 	self.index = ROLE_BODYGUARD
 	self.color = Color(255, 115, 0, 255)
 	self.abbr = 'bodygrd'
-	self.surviveBonus = 0 -- bonus multiplier for every survive while another player was killed
-	self.scoreKillsMultiplier = 1 -- multiplier for kill of player of another team
-	self.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
 	self.preventFindCredits = true
 	self.preventKillCredits = true
 	self.preventTraitorAloneCredits = true
 	self.unknownTeam = true -- player does not know their teammates
 	self.preventWin = not GetConVar('ttt_bodygrd_win_alone'):GetBool()
+
+	self.score.killsMultiplier = 2
+	self.score.teamKillsMultiplier = -4
 
 	roles.InitCustomTeam(self.name, {
 	    icon = 'vgui/ttt/dynamic/roles/icon_bodygrd',
@@ -57,7 +57,7 @@ function ROLE:Initialize()
 		LANG.AddToLanguage("Español", "search_role_" .. BODYGUARD.abbr, "Esta persona era un Guardaespaldas.")
 		LANG.AddToLanguage("Español", "target_" .. BODYGUARD.name, "Guardaespaldas")
 		LANG.AddToLanguage("Español", "ttt2_desc_" .. BODYGUARD.name, [[El Guardaespaldas gana con el equipo de la persona a la cual protege.]])
-		
+
 		LANG.AddToLanguage("Русский", BODYGUARD.name, "Телохранитель")
 		LANG.AddToLanguage("Русский", "info_popup_" .. BODYGUARD.name,
 			[[Вы телохранитель!
@@ -109,13 +109,13 @@ if SERVER then
 
 			if IsValid(guardedPlayer) then
 				if not table.HasValue(tbl, guardedPlayer) then
-					tbl[guardedPlayer] = {guardedPlayer:GetSubRole() or ROLE_INNOCENT, guardedPlayer:GetTeam() or TEAM_INNOCENT}
+					tbl[guardedPlayer] = {guardedPlayer:GetSubRole() or ROLE_NONE, guardedPlayer:GetTeam() or TEAM_INNOCENT}
 				end
 			end
 
       for teamRole in pairs(tbl) do
-        if teamRole:HasTeam(ply:GetTeam()) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE and not teamRole:GetNWBool('role_found', false) then
-          tbl[teamRole] = {ROLE_INNOCENT, TEAM_INNOCENT}
+        if teamRole:IsInTeam(ply) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE and not teamRole:GetNWBool('role_found', false) then
+          tbl[teamRole] = {ROLE_NONE, TEAM_NONE}
         end
       end
 
@@ -131,7 +131,7 @@ if SERVER then
 
 			for k,p in ipairs(guards) do
 				if not table.HasValue(tbl, p) then
-					tbl[p] = {p:GetSubRole() or ROLE_INNOCENT, p:GetTeam() or TEAM_INNOCENT}
+					tbl[p] = {p:GetSubRole() or ROLE_NONE, p:GetTeam() or TEAM_NONE}
 				end
 			end
 
@@ -142,7 +142,7 @@ if SERVER then
 
 			if BODYGRD_DATA:IsGuardOf(ply, scan) then return end
 
-			if not scan:HasTeam(ply:GetTeam()) then return end
+			if not scan:IsInTeam(ply) then return end
 
 			return ROLE_INNOCENT, TEAM_INNOCENT
 
