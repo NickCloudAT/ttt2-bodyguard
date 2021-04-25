@@ -210,6 +210,7 @@ if SERVER then
      BODYGRD_DATA:SetNewGuard(v, nil)
      BODYGRD_DATA:FindNewGuardingPlayer(v)
      v:TakeDamage(GetConVar('ttt_bodygrd_damage_guarded_death'):GetInt(), v, v)
+     events.Trigger(EVENT_BODYGUARD_FAIL, v, ply)
    end
 
  end)

@@ -38,38 +38,6 @@ function ROLE:PreInitialize()
 	}
 end
 
-function ROLE:Initialize()
-	if CLIENT then
-		LANG.AddToLanguage("English", BODYGUARD.name, "BodyGuard")
-		LANG.AddToLanguage("English", "info_popup_" .. BODYGUARD.name,
-			[[You are a Bodyguard!
-			Try to protect your Player..]])
-		LANG.AddToLanguage("English", "body_found_" .. BODYGUARD.abbr, "They were BodyGuard.")
-		LANG.AddToLanguage("English", "search_role_" .. BODYGUARD.abbr, "This person was a BodyGuard!")
-		LANG.AddToLanguage("English", "target_" .. BODYGUARD.name, "BodyGuard")
-		LANG.AddToLanguage("English", "ttt2_desc_" .. BODYGUARD.name, [[The BodyGuard needs to win with his Players team]])
-
-		LANG.AddToLanguage("Español", BODYGUARD.name, "Guardaespaldas")
-		LANG.AddToLanguage("Español", "info_popup_" .. BODYGUARD.name,
-			[[¡Eres un Guardaespaldas!
-			Intenta proteger a tu objetivo...]])
-		LANG.AddToLanguage("Español", "body_found_" .. BODYGUARD.abbr, "¡Era un Guardaespaldas!")
-		LANG.AddToLanguage("Español", "search_role_" .. BODYGUARD.abbr, "Esta persona era un Guardaespaldas.")
-		LANG.AddToLanguage("Español", "target_" .. BODYGUARD.name, "Guardaespaldas")
-		LANG.AddToLanguage("Español", "ttt2_desc_" .. BODYGUARD.name, [[El Guardaespaldas gana con el equipo de la persona a la cual protege.]])
-
-		LANG.AddToLanguage("Русский", BODYGUARD.name, "Телохранитель")
-		LANG.AddToLanguage("Русский", "info_popup_" .. BODYGUARD.name,
-			[[Вы телохранитель!
-			Постарайтесь защитить своего игрока..]])
-		LANG.AddToLanguage("Русский", "body_found_" .. BODYGUARD.abbr, "Он был телохранителем.")
-		LANG.AddToLanguage("Русский", "search_role_" .. BODYGUARD.abbr, "Этот человек был телохранителем!")
-		LANG.AddToLanguage("Русский", "target_" .. BODYGUARD.name, "Телохранитель")
-		LANG.AddToLanguage("Русский", "ttt2_desc_" .. BODYGUARD.name, [[Телохранитель должен побеждать со своей командой игроков]])
-	end
-end
-
-
 
 if SERVER then
 	local function InitRoleBodyGuard(ply)
