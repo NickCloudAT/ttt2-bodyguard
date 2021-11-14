@@ -48,7 +48,7 @@ if SERVER then
         if new == ROLE_BODYGUARD then
             InitRoleBodyGuard(ply)
         elseif old == ROLE_BODYGUARD then
-						ply:SetNWEntity('guarding_player', nil)
+			ply:SetNWEntity('guarding_player', nil)
         end
     end)
 
@@ -64,28 +64,29 @@ if SERVER then
 		end)
 
     hook.Add('PlayerSpawn', 'TTT2GuardSpawn', function(ply) -- called on player respawn
-        if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
-				if ply:IsTerror() and not ply:IsSpec() then
-        	InitRoleBodyGuard(ply)
-				end
+		if ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() ~= ROUND_ACTIVE then return end
+
+		if ply:IsTerror() and not ply:IsSpec() then
+			InitRoleBodyGuard(ply)
+		end
     end)
 
-    hook.Add('TTT2SpecialRoleSyncing', 'TTT2RoleBodyGuardMod', function(ply, tbl)
-      if ply and ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() == ROUND_POST then return end
+	hook.Add('TTT2SpecialRoleSyncing', 'TTT2RoleBodyGuardMod', function(ply, tbl)
+		if ply and ply:GetSubRole() ~= ROLE_BODYGUARD or GetRoundState() == ROUND_POST then return end
 
-			local guardedPlayer = BODYGRD_DATA:GetGuardedPlayer(ply)
+		local guardedPlayer = BODYGRD_DATA:GetGuardedPlayer(ply)
 
-			if IsValid(guardedPlayer) then
-				if not table.HasValue(tbl, guardedPlayer) then
-					tbl[guardedPlayer] = {guardedPlayer:GetSubRole() or ROLE_NONE, guardedPlayer:GetTeam() or TEAM_INNOCENT}
-				end
+		if IsValid(guardedPlayer) then
+			if not table.HasValue(tbl, guardedPlayer) then
+				tbl[guardedPlayer] = {guardedPlayer:GetSubRole() or ROLE_NONE, guardedPlayer:GetTeam() or TEAM_INNOCENT}
 			end
+		end
 
-      for teamRole in pairs(tbl) do
-        if teamRole:IsInTeam(ply) and teamRole ~= ply and teamRole ~= guardedPlayer and teamRole:GetSubRole() ~= ROLE_DETECTIVE and not teamRole:GetNWBool('role_found', false) then
-          tbl[teamRole] = {ROLE_NONE, TEAM_NONE}
-        end
-      end
+		for teamRole in pairs(tbl) do
+			if teamRole:IsInTeam(ply) and teamRole ~= ply and teamRole ~= guardedPlayer and not teamRole:GetSubRoleData().isPublicRole and not teamRole:GetNWBool('role_found', false) then
+			  tbl[teamRole] = {ROLE_NONE, TEAM_NONE}
+			end
+		end
 
     end)
 
@@ -113,7 +114,6 @@ if SERVER then
 			if not scan:IsInTeam(ply) then return end
 
 			return ROLE_INNOCENT, TEAM_INNOCENT
-
 		end)
 
 		hook.Add('TTT2TellTraitors', 'TTT2HideTraitorMessageBodyGuard', function(tmp, ply)
