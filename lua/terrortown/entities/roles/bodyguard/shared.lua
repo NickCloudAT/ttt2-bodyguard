@@ -135,3 +135,43 @@ if SERVER then
 		end)
 
 end
+
+if CLIENT then
+	function ROLE:AddToSettingsMenu(parent)
+		local form = vgui.CreateTTT2Form(parent, "header_roles_additional")
+
+		form:MakeSlider({
+			serverConvar = "ttt_bodygrd_damage_guarded_death",
+			label = "label_bodygrd_damage_guarded_death",
+			min = 0,
+			max = 100,
+			decimal = 0
+		})
+
+		form:MakeSlider({
+			serverConvar = "ttt_bodygrd_damage_reflect_multiplier",
+			label = "label_bodygrd_damage_reflect_multiplier",
+			min = 0,
+			max = 10,
+			decimal = 2
+		})
+
+		form:MakeSlider({
+			serverConvar = "ttt_bodygrd_damage_dealt_multiplier",
+			label = "label_bodygrd_damage_dealt_multiplier",
+			min = 0,
+			max = 10,
+			decimal = 2
+		})
+
+		form:MakeCheckBox({
+			serverConvar = "ttt_bodygrd_kill_guard_teamkill",
+			label = "label_bodygrd_kill_guard_teamkill"
+		})
+
+		form:MakeCheckBox({
+			serverConvar = "ttt_bodygrd_win_alone",
+			label = "label_bodygrd_win_alone"
+		})
+	end
+end
