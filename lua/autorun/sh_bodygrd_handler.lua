@@ -266,4 +266,11 @@ if SERVER then
 
  end)
 
+ -- Can't really do anything else rn.. Just don't set a BodyGuard as a target of a Hitman at any chance.
+ hook.Add('TTT2CanBeHitmanTarget', 'TTT2GuardHitmanNoTarget', function(ply, target)
+    if target:GetSubRole() ~= ROLE_BODYGUARD then return end
+
+    return false
+ end)
+
 end
